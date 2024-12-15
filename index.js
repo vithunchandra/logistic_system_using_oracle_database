@@ -1,31 +1,36 @@
-import express, { urlencoded, json } from "express";
-import { config } from "dotenv";
-import cors from "cors";
-import { userController } from "./src/modules/user/user.controller.js";
-import { DatabaseConnection } from "./src/database/database_connection.js";
-import { branchController } from "./src/modules/branch/branch.controller.js";
-import { shipmentQueueController } from "./src/modules/shipment_queue/shipment_queue.controller.js";
-import { staffController } from "./src/modules/staff/staff.controller.js";
-import { shipmentTransitController } from "./src/modules/shipment_transit/shipment_transit.controller.js";
-config();
+import express, { urlencoded, json } from "express"
+import { config } from "dotenv"
+import cors from "cors"
+import { userController } from "./src/modules/user/user.controller.js"
+import { DatabaseConnection } from "./src/database/database_connection.js"
+import { branchController } from "./src/modules/branch/branch.controller.js"
+import { shipmentQueueController } from "./src/modules/shipment_queue/shipment_queue.controller.js"
+import { staffController } from "./src/modules/staff/staff.controller.js"
+import { shipmentTransitController } from "./src/modules/shipment_transit/shipment_transit.controller.js"
+import { courierController } from "./src/modules/courier/courier.controller.js"
+import { courierQueueController } from "./src/modules/courier_queue/courier_queue.controller.js"
+config()
 
-const app = express();
-const port = 3000;
+const app = express()
+const port = 3000
+let server = null
 
 app.use(urlencoded({ extended: true }));
-app.use(json());
-app.use(cors());
+app.use(json())
+app.use(cors())
 
 const initApp = async () => {
     console.log("Starting the server");
     try {
         app.use("/api/v1/user", await userController())
-        app.use('/api/v1/staff', await staffController())
+        app.use("/api/v1/staff", await staffController())
+        app.use("/api/v1/courier", await courierController())
         app.use("/api/v1/branch", await branchController())
-        app.use("/api/v1/shipmentqueue", await shipmentQueueController())
-        app.use("/api/v1/shipmenttransit", await shipmentTransitController())
+        app.use("/api/v1/shipment-queue", await shipmentQueueController())
+        app.use("/api/v1/shipment-transit", await shipmentTransitController())
+        app.use("/api/v1/courier-queue", await courierQueueController())
         app.get("/helloworld", (req, res) => res.status(200).json({message: "Hello World"}))
-        const server = app.listen(port, async () => {
+        server = app.listen(port, async () => {
                 console.log(`Listening on port ${port}!`)
             }
         )

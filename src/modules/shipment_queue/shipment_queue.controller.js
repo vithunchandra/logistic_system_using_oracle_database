@@ -7,7 +7,9 @@ const shipmentQueueController = async () => {
     const shipmentQueueProvider = await ShipmentQueueProvider.getShipmentQueueProvider()
     
     router.post("/create", [staffAuthentication], shipmentQueueProvider.createShipmentQueue.bind(shipmentQueueProvider))
+    router.get("/by-owner/", shipmentQueueProvider.getShipmentByOwnerId.bind(shipmentQueueProvider))
     router.get("/:shipment_id", shipmentQueueProvider.getShipment.bind(shipmentQueueProvider))
+    router.get("/", shipmentQueueProvider.getAllShipments.bind(shipmentQueueProvider))
     
     return router
 }

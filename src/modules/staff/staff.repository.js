@@ -19,7 +19,7 @@ export default class StaffRepository{
 
     async createStaff(staffData){
         let sql = `INSERT INTO staffs VALUES(
-            :id, :name, :email, :password
+            :id, :name, :email, :password, :branch_id
         )`
         const result = await this.#connection.execute(
             sql,

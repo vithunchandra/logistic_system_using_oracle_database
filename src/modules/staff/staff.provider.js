@@ -36,15 +36,13 @@ export class StaffProvider{
             id: uuid4(),
             ...req.body
         })
-
+        staff.password = undefined
         const token = jwt.sign(
             { staff: staff },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: "1d" }
         );
-
         await this.#connection.commit()
-
         return res.status(201).json({token})
     }
 
@@ -63,15 +61,13 @@ export class StaffProvider{
             if(staff.password !== password){
                 return res.status(401).json({message: "Password tidak valid"})
             }
-
+            staff.password = undefined
             const token = jwt.sign(
                 { staff: staff },
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: "1d" }
             );
-
             await this.#connection.commit()
-
             return res.status(200).json({token})
         }catch(error){
             await this.#connection.rollback()

@@ -4,6 +4,8 @@ import ShipmentQueueRepository from "./shipment_queue.repository.js"
 import { DatabaseConnection } from "../../database/database_connection.js"
 import ShipmentTransitRepository from "../shipment_transit/shipment_transit.repository.js"
 import { transitRoute } from "../../utils/transit_route.js"
+import ShipmentStatus from "../../constants/shipment_status.js"
+import TransitStatus from "../../constants/transit_status.js"
 
 export default class ShipmentQueueProvider{
     static #shipmentQueueProvider = null
@@ -63,7 +65,7 @@ export default class ShipmentQueueProvider{
                 address,
                 created_at: new Date(),
                 finished_at: null,
-                status: "Shipping"
+                status: ShipmentStatus.SHIPPING
             })
 
             const route = transitRoute[origin_branch][destination_branch]
@@ -71,7 +73,8 @@ export default class ShipmentQueueProvider{
             for(let i=0; i<route.length; i++){
                 routeData.push({
                     previous_branch: i === 0 ? parseInt(origin_branch) : route[i - 1],
-                    next_branch: route[i]
+                    next_branch: route[i],
+                    status: i === 0 ? TransitStatus.SHIPPING : TransitStatus.PENDING
                 })
             }
             const transit = await this.#shipmentTransitRepository.createShipmentTransit(routeData, shipmentQueue.id)
@@ -93,6 +96,35 @@ export default class ShipmentQueueProvider{
         const shipment = await this.#shipmentQueueRepository.getShipment(shipment_id)
         const transit = await this.#shipmentTransitRepository.getShipmentTransit(shipment_id)
         
-        return res.status(200).json({data: {...shipment, transit}})
+        return res.status(200).json({shipment: {...shipment, transit}})
+    }
+
+    async getAllShipments(req, res){
+        const {origin_id, destination_id, status, order_by} = req.query
+        let shipments = await this.#shipmentQueueRepository.getAllShipments(origin_id, destination_id, status, order_by)
+        shipments = await Promise.all(
+            shipments.map( async shipment => {
+                const transit = await this.#shipmentTransitRepository.getShipmentTransit(shipment.id)
+                return {
+                    ...shipment, transit
+                }
+            })
+        )
+        return res.status(200).json({shipments})
+    }
+
+    async getShipmentByOwnerId(req, res){
+        const {owner_id} = req.query
+        console.log("hallo")
+        let shipments = await this.#shipmentQueueRepository.getShipmentByOwnerId(owner_id)
+        shipments = await Promise.all(
+            shipments.map( async shipment => {
+                const transit = await this.#shipmentTransitRepository.getShipmentTransit(shipment.id)
+                return {
+                    ...shipment, transit
+                }
+            })
+        )
+        return res.status(200).json({shipments})
     }
 }

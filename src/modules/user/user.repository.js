@@ -41,7 +41,7 @@ export class UserRepository{
             }
         )
         const user = await this.getLastRow(result.lastRowid)
-        return convertToSingleObject(user);
+        return convertToSingleObject(user.rows);
     }
 
     async getLastRow(id){

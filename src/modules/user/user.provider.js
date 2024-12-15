@@ -40,15 +40,13 @@ export default class UserProvider{
             const user = await this.#userRepository.createUser({
                 email, name, password, location, id: uuidv4()
             })
-    
+            user.password = undefined
             const token = jwt.sign(
                 { user: user },
                 process.env.ACCESS_TOKEN_SECRET,
                 { expiresIn: "1d" }
             );
-    
             await this.#connection.commit()
-
             return res.status(201).json({token})
         }catch(error){
             await this.#connection.rollback()
@@ -70,13 +68,12 @@ export default class UserProvider{
         if(user.password !== password){
             return res.status(401).json({message: "Password tidak valid"})
         }
-
+        user.password = undefined
         const token = jwt.sign(
             { user: user },
             process.env.ACCESS_TOKEN_SECRET,
             { expiresIn: "1d" }
         );
-
         return res.status(200).json({token})
     }
 }

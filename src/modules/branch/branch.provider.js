@@ -30,9 +30,9 @@ export default class BranchProvider{
         }
 
         try{
-            const result = await this.#branchRepository.createBranch({id, name, location})
+            const branch = await this.#branchRepository.createBranch({id, name, location})
             this.#connection.commit()
-            return res.status(201).json({data: result})
+            return res.status(201).json({branch})
         }catch(error){
             this.#connection.rollback()
             return res.status(500).json({message: error.message})
@@ -40,11 +40,11 @@ export default class BranchProvider{
     }
 
     async getAllBranch(req, res){
-        return res.status(200).json({data: await this.#branchRepository.getAllBranch()})
+        return res.status(200).json({branches: await this.#branchRepository.getAllBranch()})
     }
 
     async getBranch(req, res){
         const {id} = req.params
-        return res.status(200).json({data: await this.#branchRepository.getBranch(id)})
+        return res.status(200).json({branch: await this.#branchRepository.getBranch(id)})
     }
 }
