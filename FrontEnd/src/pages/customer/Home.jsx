@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import BarcodeScanner from '../../component/BarcodeScanner';
 
 function Home() {
@@ -10,21 +11,23 @@ function Home() {
   };
 
   return (
-    <div className="w-full max-w-[450px] min-h-screen mx-auto bg-[#f5f5f5] relative">
+    <div className="w-full max-w-[450px] min-h-screen mx-auto bg-white relative">
       {/* Header dengan Background Hijau */}
       <div className="bg-[#3C6255] p-6 rounded-b-[30px] relative pb-48">
         <div className="flex justify-between items-center mb-8">
           <div>
             <p className="text-white text-sm">Current Location</p>
-            <h2 className="text-white text-xl font-semibold">Bandung</h2>
+            <h2 className="text-white text-xl font-semibold">Jomokkerto</h2>
           </div>
-          <div className="w-10 h-10 bg-white rounded-full overflow-hidden">
-            <img 
-              src="/public/images/cihuy.png" 
-              alt="Profile" 
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <Link to="/profile">
+            <div className="w-10 h-10 bg-white rounded-full overflow-hidden cursor-pointer">
+              <img 
+                src="/public/images/cihuy.png" 
+                alt="Profile" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </Link>
         </div>
 
         <div className="text-white mb-6">
