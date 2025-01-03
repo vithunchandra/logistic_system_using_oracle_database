@@ -68,6 +68,14 @@ function Login() {
          jalur langit
         </Link>
 
+        <Link to="/home-staff" className="text-[#3C6255]">
+         jalur langit 2
+        </Link>
+
+        <Link to="/courier_home" className="text-[#3C6255]">
+         jalur langit 3
+        </Link>
+
         <div className="mt-6 text-center">
           <span className="text-gray-600">Belum punya akun? </span>
           <Link to="/register" className="text-[#3C6255]">

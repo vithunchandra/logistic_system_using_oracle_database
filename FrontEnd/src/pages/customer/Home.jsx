@@ -1,13 +1,35 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import BarcodeScanner from '../../component/BarcodeScanner';
 
 function Home() {
+  const navigate = useNavigate();
   const [showScanner, setShowScanner] = useState(false);
   const [trackingNumber, setTrackingNumber] = useState('');
+  const [showEmptyAlert, setShowEmptyAlert] = useState(false);
+  const [showNotFoundAlert, setShowNotFoundAlert] = useState(false);
 
   const handleScanSuccess = (result) => {
     setTrackingNumber(result);
+    setShowScanner(false);
+  };
+
+  const handleTrack = () => {
+    if (!trackingNumber.trim()) {
+      setShowEmptyAlert(true);
+      return;
+    }
+
+    // Implementasi validasi tracking number
+    // Contoh: cek apakah tracking number ada di database
+    const isValidTracking = false; // Ganti dengan validasi sebenarnya
+
+    if (!isValidTracking) {
+      setShowNotFoundAlert(true);
+      return;
+    }
+
+    navigate(`/tracking/${trackingNumber}`);
   };
 
   return (
@@ -50,7 +72,10 @@ function Home() {
             value={trackingNumber}
             onChange={(e) => setTrackingNumber(e.target.value)}
           />
-          <button className="bg-[#F2B555] text-white px-6 py-2 rounded-full">
+          <button 
+            className="bg-[#F2B555] text-white px-6 py-2 rounded-full hover:bg-[#F2B555]/90 transition-colors"
+            onClick={handleTrack}
+          >
             Track
           </button>
         </div>
@@ -71,16 +96,9 @@ function Home() {
         <p className="text-gray-400 mb-6">here we have best features</p>
 
         <div className="grid grid-cols-2 gap-4">
-          {/* Pickup Card */}
-          <div className="bg-white p-4 rounded-xl shadow transition-colors duration-300 hover:bg-[#3C6255] hover:text-white group">
-            <div className="bg-[#F2B555] w-10 h-10 rounded-full flex items-center justify-center mb-4">
-              <img src="/public/icons/curier-svgrepo-com.svg" alt="Pickup" className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold">Pickup</h3>
-            <p className="text-gray-400 group-hover:text-gray-200 text-sm">Not yet sent</p>
-          </div>
 
           {/* Delivery Card */}
+          <Link to="/delivery">
           <div className="bg-white p-4 rounded-xl shadow transition-colors duration-300 hover:bg-[#3C6255] hover:text-white group">
             <div className="bg-[#F2B555] w-10 h-10 rounded-full flex items-center justify-center mb-4">
               <img src="/public/icons/box.svg" alt="Delivery" className="w-6 h-6" />
@@ -88,6 +106,7 @@ function Home() {
             <h3 className="font-semibold">Delivery</h3>
             <p className="text-gray-400 group-hover:text-gray-200 text-sm">Not yet sent</p>
           </div>
+          </Link>
 
           {/* Additional Cards */}
           <div className="bg-white p-4 rounded-xl shadow transition-colors duration-300 hover:bg-[#3C6255] hover:text-white group">
@@ -98,18 +117,56 @@ function Home() {
             <p className="text-gray-400 group-hover:text-gray-200 text-sm">View all your history</p>
           </div>
 
-          <div className="bg-white p-4 rounded-xl shadow transition-colors duration-300 hover:bg-[#3C6255] hover:text-white group">
-            <div className="bg-[#F2B555] w-10 h-10 rounded-full flex items-center justify-center mb-4">
-              <img src="/box-icon.png" alt="Box" className="w-6 h-6" />
+        </div>
+
+        {/* Empty Alert */}
+        {showEmptyAlert && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-[80%] max-w-sm">
+              <h3 className="text-lg font-semibold mb-4">Perhatian</h3>
+              <p className="text-gray-600 mb-6">
+                Silakan masukkan atau scan tracking number terlebih dahulu
+              </p>
+              
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowEmptyAlert(false)}
+                  className="px-4 py-2 bg-[#3C6255] text-white rounded-lg hover:bg-[#3C6255]/90"
+                >
+                  OK
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Not Found Alert */}
+        {showNotFoundAlert && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-[80%] max-w-sm">
+              <h3 className="text-lg font-semibold mb-4">Tracking Tidak Ditemukan</h3>
+              <p className="text-gray-600 mb-6">
+                Maaf, tracking number tidak ditemukan. Silakan periksa kembali nomor tracking Anda.
+              </p>
+              
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowNotFoundAlert(false)}
+                  className="px-4 py-2 bg-[#3C6255] text-white rounded-lg hover:bg-[#3C6255]/90"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Barcode Scanner Modal */}
         {showScanner && (
-            <BarcodeScanner
+          <BarcodeScanner
             onClose={() => setShowScanner(false)}
             onScanSuccess={handleScanSuccess}
-            />
+          />
         )}
       </div>
     </div>
