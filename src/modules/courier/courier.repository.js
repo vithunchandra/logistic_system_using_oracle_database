@@ -19,7 +19,7 @@ export default class CourierRepository{
 
     async createCourier(courierData){
         const result = await this.#connection.execute(
-            `INSERT INTO couriers VALUES(:id, :name, :email, :password, :phone_number, :branch_id)`,
+            `INSERT INTO couriers VALUES(:id, :name, :email, :password, :phone_number, :updated_at, :branch_id)`,
             {...courierData}
         )
         const courier = await this.getLastRow(result.lastRowid)

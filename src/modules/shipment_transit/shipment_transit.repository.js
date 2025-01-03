@@ -21,17 +21,18 @@ export default class ShipmentTransitRepository{
 
     async createShipmentTransit(transitRoute, shipment_id){
         const sql = `INSERT INTO shipment_transits VALUES(
-            :id, :shipment_id, :previous_branch, :next_branch, :status
+            :id, :shipment_id, :previous_branch, :next_branch, :status, :updated_at
         )`
         const binds = transitRoute.map(row => ({
-            id: uuid4(),
+            id: null,
             shipment_id: shipment_id,
             previous_branch: row.previous_branch,
             next_branch: row.next_branch,
-            status: row.status
+            status: row.status,
+            updated_at: null
         }))
         await this.#connection.executeMany(sql, binds)
-        return this.getShipmentTransit(shipment_id)
+        return this.getShipmentTransitByShipmentId(shipment_id)
     }
 
     async getShipmentTransit(condition){
@@ -75,6 +76,14 @@ export default class ShipmentTransitRepository{
         const result = await this.#connection.execute(
             "SELECT * FROM shipment_transits WHERE branch_id = :branch_id",
             {branch_id}
+        )
+        return convertToArray(result.rows)
+    }
+
+    async getShipmentTransitByShipmentId(shipment_id){
+        const result = await this.#connection.execute(
+            "SELECT * FROM shipment_transits WHERE shipment_id = :shipment_id",
+            {shipment_id}
         )
         return convertToArray(result.rows)
     }

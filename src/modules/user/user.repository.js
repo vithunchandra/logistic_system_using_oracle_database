@@ -28,7 +28,7 @@ export class UserRepository{
 
     async createUser(userData){
         let sql = `INSERT INTO users VALUES (
-            :id, :name, :email, :password, :location
+            :id, :name, :email, :password, :location, :phoneNumber, :updated_at
         )`
         const result = await this.#connection.execute(
             sql,
@@ -37,7 +37,9 @@ export class UserRepository{
                 name: userData.name,
                 email: userData.email,
                 password: userData.password,
-                location: userData.location
+                location: userData.location,
+                phoneNumber: userData.phoneNumber,
+                updated_at: userData.updated_at
             }
         )
         const user = await this.getLastRow(result.lastRowid)

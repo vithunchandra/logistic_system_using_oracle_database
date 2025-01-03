@@ -33,9 +33,11 @@ export class StaffProvider{
         }
 
         const staff = await this.#staffRepository.createStaff({
-            id: uuid4(),
+            id: null,
+            updated_at: null,
             ...req.body
         })
+        console.log("test")
         staff.password = undefined
         const token = jwt.sign(
             { staff: staff },

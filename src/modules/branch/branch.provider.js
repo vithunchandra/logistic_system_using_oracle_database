@@ -30,7 +30,7 @@ export default class BranchProvider{
         }
 
         try{
-            const branch = await this.#branchRepository.createBranch({id, name, location})
+            const branch = await this.#branchRepository.createBranch({id, name, location, updated_at: null})
             this.#connection.commit()
             return res.status(201).json({branch})
         }catch(error){

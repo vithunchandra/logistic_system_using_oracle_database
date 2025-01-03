@@ -73,12 +73,13 @@ export default class ShipmentTransitProvider{
             transit = await this.#shipmentTransitRepository.updateTransitStatus(transit.id, TransitStatus.ARRIVED)
             if(shipment.destination_branch === transit.next_branch){
                 const courierQueue = await this.#courierQueueRepository.createCourierQueue({
-                    id: uuid4(),
+                    id: null,
                     shipment_id: shipment.id,
                     courier_id: null,
                     created_at: new Date(),
                     finished_at: null,
-                    status: CourierQueueStatus.DELIVERING
+                    status: CourierQueueStatus.DELIVERING,
+                    updated_at: null
                 })
                 await this.#connection.commit()
 

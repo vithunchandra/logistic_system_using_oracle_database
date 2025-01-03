@@ -19,8 +19,10 @@ export default class StaffRepository{
 
     async createStaff(staffData){
         let sql = `INSERT INTO staffs VALUES(
-            :id, :name, :email, :password, :branch_id
+            :id, :name, :email, :password, :updated_at, :branch_id
         )`
+        console.log(sql)
+        console.log(staffData)
         const result = await this.#connection.execute(
             sql,
             {...staffData}

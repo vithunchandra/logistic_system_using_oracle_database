@@ -19,8 +19,9 @@ export default class PaymentRepository{
 
     async createPayment(paymentData){
         let sql = `INSERT INTO payments VALUES(
-            :id, :staff_id, :gross_amount, :created_at, :user_id
+            :id, :staff_id, :created_at, :gross_amount, :updated_at, :user_id
         )`
+        console.log(paymentData)
         const result = await this.#connection.execute(sql, {
             ...paymentData
         })

@@ -22,8 +22,8 @@ export default class UserProvider{
     }
 
     async createUser(req, res){
-        const {email, name, password, confirmPassword, location} = req.body
-        if(!email || !name || !password || !confirmPassword || !location){
+        const {email, name, password, confirmPassword, location, phoneNumber} = req.body
+        if(!email || !name || !password || !confirmPassword || !location || !phoneNumber){
             return res.status(401).json({message: "Semua field harus diisii"})
         }
 
@@ -38,7 +38,7 @@ export default class UserProvider{
         
         try{
             const user = await this.#userRepository.createUser({
-                email, name, password, location, id: uuidv4()
+                email, name, password, location, id: null, phoneNumber, updated_at: null
             })
             user.password = undefined
             const token = jwt.sign(

@@ -1,3 +1,4 @@
+import CourierQueueStatus from "../../constants/courier_queue_status.js"
 import { DatabaseConnection } from "../../database/database_connection.js"
 import { convertToArray, convertToSingleObject } from "../../utils/database_result_converter.js"
 
@@ -36,7 +37,8 @@ export default class CourierQueueRepository{
             `
                 INSERT INTO courier_queues VALUES(
                     :id, :shipment_id, :courier_id, 
-                    :created_at, :finished_at, :status
+                    :created_at, :finished_at, :status, 
+                    :updated_at
                 )
             `,
             {...courierQueueData}
@@ -55,10 +57,16 @@ export default class CourierQueueRepository{
     }
 
     async updateCourierQueueStatus(id, status){
-        const result = await this.#connection.execute(
-            `UPDATE courier_queues SET status = :status WHERE id = :id`,
-            {status, id}
-        )
+        let sql = `UPDATE courier_queues SET status = :status`
+        let bind = {id, status}
+
+        if(status === CourierQueueStatus.ARRIVED){
+            sql += ", finished_at = :finished_at"
+            bind = {...bind, finished_at: new Date()}
+        }
+        sql += " WHERE id = :id"
+        
+        const result = await this.#connection.execute(sql, bind)
         const courierQueue = await this.getLastRow(result.lastRowid)
         return convertToSingleObject(courierQueue.rows)
     }

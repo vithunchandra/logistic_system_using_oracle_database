@@ -1,3 +1,4 @@
+import ShipmentStatus from "../../constants/shipment_status.js"
 import { DatabaseConnection } from "../../database/database_connection.js"
 import { convertToArray, convertToSingleObject } from "../../utils/database_result_converter.js"
 
@@ -34,9 +35,9 @@ export default class ShipmentQueueRepository{
 
     async createShipmentQueue(shipmentQueueData){
         const sql = `INSERT INTO shipment_queues VALUES(
-            :id, :owner_id, :origin_branch,:destination_branch, 
-            :item_name, :weight, :address, :created_at, :finished_at, 
-            :status, :receiver_name
+            :id, :owner_id, :receiver_name, :origin_branch,:destination_branch, 
+            :payment_id, :item_name, :weight, :address, :created_at, :finished_at, 
+            :status, :updated_at
         )`
         const result = await this.#connection.execute(
             sql,
@@ -47,10 +48,16 @@ export default class ShipmentQueueRepository{
     }
 
     async updateShipmentQueueStatus(id, status){
-        const result = await this.#connection.execute(
-            "UPDATE shipment_queues SET status = :status WHERE id = :id",
-            {id, status}
-        )
+        let sql = `UPDATE shipment_queues SET status = :status`
+        let bind = {id, status}
+
+        if(status === ShipmentStatus.ARRIVED){
+            sql += `, finished_at = :finished_at`
+            bind = {...bind, finished_at: new Date()}
+        }
+        sql += ` WHERE id = :id`
+
+        const result = await this.#connection.execute(sql, bind)
         const shipment = await this.getLastRow(result.lastRowid)
         return convertToSingleObject(shipment.rows)
     }

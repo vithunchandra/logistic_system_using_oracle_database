@@ -47,25 +47,33 @@ export default class ShipmentQueueProvider{
             return res.status(401).json({message: "Semua field wajib diisi"})
         }
 
-        try{
-            const staff = req.staff
+        const staff = req.staff
+            
+        if(parseInt(origin_branch) !== staff.branch_id){
+            return res.status(401).json({message: "Staff bukan berasal dari branch tujuan transit"})
+        }
 
+        try{
             const payment = await this.#paymentRepository.createPayment({
-                id: uuid4(), user_id: owner_id, staff_id: staff.id, gross_amount: parseInt(gross_amount), created_at: new Date()
+                id: null, user_id: owner_id, staff_id: 
+                staff.id, gross_amount: parseInt(gross_amount), 
+                created_at: new Date(), updated_at: null
             })
 
             const shipmentQueue = await this.#shipmentQueueRepository.createShipmentQueue({
-                id: uuid4(),
+                id: null,
                 owner_id,
                 receiver_name,
                 origin_branch: parseInt(origin_branch),
                 destination_branch: parseInt(destination_branch),
+                payment_id: payment.id,
                 item_name,
                 weight: parseInt(weight),
                 address,
                 created_at: new Date(),
                 finished_at: null,
-                status: ShipmentStatus.SHIPPING
+                status: ShipmentStatus.SHIPPING,
+                updated_at: null
             })
 
             const route = transitRoute[origin_branch][destination_branch]

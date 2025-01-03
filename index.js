@@ -9,8 +9,7 @@ import { staffController } from "./src/modules/staff/staff.controller.js"
 import { shipmentTransitController } from "./src/modules/shipment_transit/shipment_transit.controller.js"
 import { courierController } from "./src/modules/courier/courier.controller.js"
 import { courierQueueController } from "./src/modules/courier_queue/courier_queue.controller.js"
-config()
-
+const env = config()
 const app = express()
 const port = 3000
 let server = null

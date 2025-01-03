@@ -19,14 +19,15 @@ export default class BranchRepository{
 
     async createBranch(branchData){
         const sql = `INSERT INTO branches VALUES(
-            :id, :name, :location
+            :id, :name, :location, :updated_at
         )`
         const result = await this.#connection.execute(
             sql,
             {
                 id: branchData.id,
                 name: branchData.name,
-                location: branchData.location
+                location: branchData.location,
+                updated_at: branchData.updated_at
             }
         )
         const branch = await this.getLastRow(result.lastRowid)

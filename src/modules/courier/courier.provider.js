@@ -37,7 +37,8 @@ export default class CourierProvider{
 
         try{
             const courier = await this.#courierRepository.createCourier({
-                id: uuid(),
+                id: null,
+                updated_at: null,
                 ...req.body
             })
             courier.password = undefined
