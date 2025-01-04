@@ -1,8 +1,10 @@
 import CourierQueueStatus from "../../constants/courier_queue_status.js"
 import TransitStatus from "../../constants/transit_status.js"
 import { DatabaseConnection } from "../../database/database_connection.js"
+import BranchRepository from "../branch/branch.repository.js"
 import CourierQueueRepository from "../courier_queue/courier_queue.repository.js"
 import ShipmentQueueRepository from "../shipment_queue/shipment_queue.repository.js"
+import { TrackingRepository } from "../tracking/tracking.repository.js"
 import ShipmentTransitRepository from "./shipment_transit.repository.js"
 import {v4 as uuid4} from 'uuid'
 
@@ -11,12 +13,19 @@ export default class ShipmentTransitProvider{
     #shipmentTransitRepository = null
     #shipmentQueueRepository = null
     #courierQueueRepository = null
+    #trackingRepository = null
+    #branchRepository = null
     #connection = null
 
-    constructor(shipmentTransitRepository, shipmentQueueRepository, courierQueueRepository, connection){
+    constructor(
+        shipmentTransitRepository, shipmentQueueRepository, courierQueueRepository, 
+        trackingRepository, branchRepository, connection
+    ){
         this.#shipmentTransitRepository = shipmentTransitRepository
         this.#shipmentQueueRepository = shipmentQueueRepository
         this.#courierQueueRepository = courierQueueRepository
+        this.#trackingRepository = trackingRepository
+        this.#branchRepository = branchRepository
         this.#connection = connection
     }
 
@@ -28,6 +37,8 @@ export default class ShipmentTransitProvider{
             await ShipmentTransitRepository.getShipmentTransitRepository(),
             await ShipmentQueueRepository.getShipmentQueueRepository(),
             await CourierQueueRepository.getCourierQueueRepository(),
+            await TrackingRepository.getTrackingRepository(),
+            await BranchRepository.getBranchRepository(),
             await DatabaseConnection.getConnection() 
         )
         return this.#shipmentTransitProvider
@@ -71,6 +82,11 @@ export default class ShipmentTransitProvider{
 
         try{
             transit = await this.#shipmentTransitRepository.updateTransitStatus(transit.id, TransitStatus.ARRIVED)
+            const branch = await this.#branchRepository.getBranch(transit.next_branch)
+            await this.#trackingRepository.createTrack({
+                id: null, shipment_id: transit.shipment_id, staff_id: staff.id, 
+                message: `Barang sudah sampai pada branch destinasi ${branch.name}`, created_at: new Date()
+            })
             if(shipment.destination_branch === transit.next_branch){
                 const courierQueue = await this.#courierQueueRepository.createCourierQueue({
                     id: null,
@@ -81,12 +97,24 @@ export default class ShipmentTransitProvider{
                     status: CourierQueueStatus.DELIVERING,
                     updated_at: null
                 })
+                
+                await this.#trackingRepository.createTrack({
+                    id: null, shipment_id: transit.shipment_id, staff_id: staff.id, 
+                    message: `Barang sudah masuk dalam antrian delivery`, created_at: new Date((new Date()).getTime() + 1)
+                })
+
                 await this.#connection.commit()
 
                 return res.status(201).json({transit, courierQueue})
             }else{
-                let nextTransit = await  this.#shipmentTransitRepository.getNextTransit(transit.id)
+                let nextTransit = await this.#shipmentTransitRepository.getNextTransit(transit.id)
                 nextTransit = await this.#shipmentTransitRepository.updateTransitStatus(nextTransit.id, TransitStatus.SHIPPING)
+                const nextBranch = await this.#branchRepository.getBranch(nextTransit.next_branch)
+                await this.#trackingRepository.createTrack({
+                    id: null, shipment_id: transit.shipment_id, staff_id: staff.id, 
+                    message: `Barang sedang dalam perjalanan transit menuju branch ${nextBranch.name}`, created_at: new Date((new Date()).getTime() + 1)
+                })
+
                 await this.#connection.commit()
                 
                 return res.status(201).json({transit})

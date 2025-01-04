@@ -9,6 +9,7 @@ import { staffController } from "./src/modules/staff/staff.controller.js"
 import { shipmentTransitController } from "./src/modules/shipment_transit/shipment_transit.controller.js"
 import { courierController } from "./src/modules/courier/courier.controller.js"
 import { courierQueueController } from "./src/modules/courier_queue/courier_queue.controller.js"
+import { trackingController } from "./src/modules/tracking/tracking.controller.js"
 const env = config()
 const app = express()
 const port = 3000
@@ -28,6 +29,7 @@ const initApp = async () => {
         app.use("/api/v1/shipment-queue", await shipmentQueueController())
         app.use("/api/v1/shipment-transit", await shipmentTransitController())
         app.use("/api/v1/courier-queue", await courierQueueController())
+        app.use("/api/v1/track", await trackingController())
         app.get("/helloworld", (req, res) => res.status(200).json({message: "Hello World"}))
         server = app.listen(port, async () => {
                 console.log(`Listening on port ${port}!`)

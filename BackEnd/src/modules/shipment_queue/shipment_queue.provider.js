@@ -6,18 +6,28 @@ import ShipmentTransitRepository from "../shipment_transit/shipment_transit.repo
 import { transitRoute } from "../../utils/transit_route.js"
 import ShipmentStatus from "../../constants/shipment_status.js"
 import TransitStatus from "../../constants/transit_status.js"
+import { TrackingRepository } from "../tracking/tracking.repository.js"
+import BranchRepository from "../branch/branch.repository.js"
 
 export default class ShipmentQueueProvider{
     static #shipmentQueueProvider = null
     #paymentRepository = null
     #shipmentQueueRepository = null
     #shipmentTransitRepository = null
+    #trackingRepository = null
+    #branchRepository = null
     #connection = null
 
-    constructor(paymentRepository, shipmentQueueRepository, shipmentTransitRepository, connection){
+    constructor(
+        paymentRepository, shipmentQueueRepository, 
+        shipmentTransitRepository, trackingRepository,
+        branchRepository, connection
+    ){
         this.#paymentRepository = paymentRepository
         this.#shipmentQueueRepository = shipmentQueueRepository
         this.#shipmentTransitRepository = shipmentTransitRepository
+        this.#trackingRepository = trackingRepository
+        this.#branchRepository = branchRepository
         this.#connection = connection
     }
 
@@ -29,6 +39,8 @@ export default class ShipmentQueueProvider{
             await PaymentRepository.getPaymentRepository(),
             await ShipmentQueueRepository.getShipmentQueueRepository(),
             await ShipmentTransitRepository.getShipmentTransitRepository(),
+            await TrackingRepository.getTrackingRepository(),
+            await BranchRepository.getBranchRepository(),
             await DatabaseConnection.getConnection()
         )
         return this.#shipmentQueueProvider
@@ -86,6 +98,12 @@ export default class ShipmentQueueProvider{
                 })
             }
             const transit = await this.#shipmentTransitRepository.createShipmentTransit(routeData, shipmentQueue.id)
+            const firstTransit = transit[0]
+            const branch = await this.#branchRepository.getBranch(firstTransit.next_branch)
+            await this.#trackingRepository.createTrack({
+                id: null, shipment_id: shipmentQueue.id, staff_id: staff.id, 
+                message: `Barang sedang dalam perjalanan transit menuju branch ${branch.name}`, created_at: new Date()
+            })
             
             await this.#connection.commit()
 
