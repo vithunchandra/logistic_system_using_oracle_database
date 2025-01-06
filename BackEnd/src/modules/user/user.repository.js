@@ -1,5 +1,5 @@
 import { DatabaseConnection } from "../../database/database_connection.js"
-import { convertToSingleObject } from "../../utils/database_result_converter.js";
+import { convertToArray, convertToSingleObject } from "../../utils/database_result_converter.js";
 
 export class UserRepository{
     static #userRepository = null
@@ -15,15 +15,6 @@ export class UserRepository{
         }
         this.#userRepository = new UserRepository(await DatabaseConnection.getConnection())
         return this.#userRepository
-    }
-
-    async findOneByEmail(email){
-        let sql = "SELECT * FROM users WHERE email = :email"
-        const result = await this.#connection.execute(
-            sql,
-            {email: email}
-        )
-        return result.rows.length > 0 ? result.rows[0] : undefined;
     }
 
     async createUser(userData){
@@ -44,6 +35,30 @@ export class UserRepository{
         )
         const user = await this.getLastRow(result.lastRowid)
         return convertToSingleObject(user.rows);
+    }
+
+    async getAllUser(){
+        const result = await this.#connection.execute(
+            "SELECT * FROM users"
+        )
+        return convertToArray(result.rows)
+    }
+
+    async getUser(id){
+        const result = await this.#connection.execute(
+            "SELECT * FROM users WHERE id = :id",
+            {id}
+        )
+        return convertToSingleObject(result.rows)
+    }
+
+    async findOneByEmail(email){
+        let sql = "SELECT * FROM users WHERE email = :email"
+        const result = await this.#connection.execute(
+            sql,
+            {email: email}
+        )
+        return result.rows.length > 0 ? result.rows[0] : undefined;
     }
 
     async getLastRow(id){

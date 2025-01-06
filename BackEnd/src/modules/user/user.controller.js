@@ -7,6 +7,8 @@ const userController = async () => {
     
     router.post("/auth/signup", userProvider.createUser.bind(userProvider))
     router.post("/auth/signin", userProvider.login.bind(userProvider))
+    router.get("/", userProvider.getAllUser.bind(userProvider))
+    router.get("/:id", userProvider.getUser.bind(userProvider))
     return router
 }
 

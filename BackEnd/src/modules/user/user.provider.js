@@ -76,4 +76,17 @@ export default class UserProvider{
         );
         return res.status(200).json({token})
     }
+
+    async getAllUser(req, res){
+        return res.status(200).json({
+            users: await this.#userRepository.getAllUser()
+        })
+    }
+
+    async getUser(req, res){
+        const {id} = req.params
+        return res.status(200).json({
+            user: await this.#userRepository.getUser(id)
+        })
+    }
 }
