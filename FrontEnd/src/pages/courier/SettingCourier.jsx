@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
-function Setting() {
+function SettingCourier() {
   const navigate = useNavigate();
   const [showLogoutAlert, setShowLogoutAlert] = useState(false);
 
@@ -10,7 +10,7 @@ function Setting() {
   };
 
   const confirmLogout = () => {
-    navigate('/login-staff');
+    navigate('/login-courier');
   };
 
   return (
@@ -94,4 +94,4 @@ function Setting() {
   );
 }
 
-export default Setting;
+export default SettingCourier;

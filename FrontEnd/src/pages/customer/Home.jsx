@@ -96,18 +96,6 @@ function Home() {
         <p className="text-gray-400 mb-6">here we have best features</p>
 
         <div className="grid grid-cols-2 gap-4">
-
-          {/* Delivery Card */}
-          <Link to="/delivery">
-          <div className="bg-white p-4 rounded-xl shadow transition-colors duration-300 hover:bg-[#3C6255] hover:text-white group">
-            <div className="bg-[#F2B555] w-10 h-10 rounded-full flex items-center justify-center mb-4">
-              <img src="/public/icons/box.svg" alt="Delivery" className="w-6 h-6" />
-            </div>
-            <h3 className="font-semibold">Delivery</h3>
-            <p className="text-gray-400 group-hover:text-gray-200 text-sm">Not yet sent</p>
-          </div>
-          </Link>
-
           {/* Additional Cards */}
           <div className="bg-white p-4 rounded-xl shadow transition-colors duration-300 hover:bg-[#3C6255] hover:text-white group">
             <div className="bg-[#F2B555] w-10 h-10 rounded-full flex items-center justify-center mb-4">

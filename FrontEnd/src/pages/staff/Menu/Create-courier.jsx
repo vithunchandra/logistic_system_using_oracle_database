@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { createCourier } from '../../../handler';
 
 function CreateCourier() {
   const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -24,10 +28,23 @@ function CreateCourier() {
     setShowAlert(true);
   };
 
-  const confirmSubmit = () => {
-    // Implementasi logic submit data ke API
-    console.log('Data submitted:', formData);
-    navigate('/home-staff');
+  const confirmSubmit = async () => {
+    setIsLoading(true);
+    const result = await createCourier(formData);
+
+    if (result.success) {
+      // Redirect ke home staff dengan pesan sukses
+      navigate('/home-staff', { 
+        state: { 
+          successMessage: 'Courier berhasil dibuat!' 
+        }
+      });
+    } else {
+      setErrorMessage(result.error);
+      setShowErrorAlert(true);
+      setShowAlert(false);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -72,7 +89,7 @@ function CreateCourier() {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Name"
+              placeholder="Full Name"
               className="w-full p-4 bg-gray-50 rounded-xl text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#3C6255]"
               required
             />
@@ -129,12 +146,38 @@ function CreateCourier() {
 
           <button
             type="submit"
-            className="w-full bg-[#3C6255] text-white py-4 rounded-xl hover:bg-[#3C6255]/90 transition-colors"
+            className="w-full bg-[#3C6255] text-white py-4 rounded-xl hover:bg-[#3C6255]/90 transition-colors disabled:opacity-50"
+            disabled={isLoading}
           >
-            Create Courier
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Loading...</span>
+              </div>
+            ) : (
+              'Create Courier'
+            )}
           </button>
         </form>
       </div>
+
+      {/* Error Alert */}
+      {showErrorAlert && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-[80%] max-w-sm">
+            <h3 className="text-lg font-semibold mb-4 text-red-600">Gagal Membuat Courier</h3>
+            <p className="text-gray-600 mb-6">{errorMessage}</p>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowErrorAlert(false)}
+                className="px-4 py-2 bg-[#3C6255] text-white rounded-lg hover:bg-[#3C6255]/90"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Confirmation Alert */}
       {showAlert && (
@@ -144,7 +187,6 @@ function CreateCourier() {
             <div className="space-y-2 mb-6">
               <p className="text-gray-600">Name: {formData.name}</p>
               <p className="text-gray-600">Email: {formData.email}</p>
-              <p className="text-gray-600">Password: {formData.password}</p>
               <p className="text-gray-600">Phone: {formData.phone_number}</p>
               <p className="text-gray-600">Branch ID: {formData.branch_id}</p>
             </div>
@@ -154,14 +196,23 @@ function CreateCourier() {
               <button
                 onClick={() => setShowAlert(false)}
                 className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+                disabled={isLoading}
               >
                 Edit
               </button>
               <button
                 onClick={confirmSubmit}
                 className="px-4 py-2 bg-[#3C6255] text-white rounded-lg hover:bg-[#3C6255]/90"
+                disabled={isLoading}
               >
-                Submit
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Loading...</span>
+                  </div>
+                ) : (
+                  'Submit'
+                )}
               </button>
             </div>
           </div>

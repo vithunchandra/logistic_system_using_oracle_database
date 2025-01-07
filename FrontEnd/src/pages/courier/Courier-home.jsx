@@ -11,7 +11,7 @@ function Courier_home() {
             <p className="text-white text-sm">Current Location</p>
             <h2 className="text-white text-xl font-semibold">Jomokkerto</h2>
           </div>
-          <Link to="/setting">
+          <Link to="/setting-courier">
             <div className="w-10 h-10 bg-white rounded-full overflow-hidden cursor-pointer flex items-center justify-center hover:bg-gray-100">
               <svg 
                 xmlns="http://www.w3.org/2000/svg" 

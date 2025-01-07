@@ -1,8 +1,13 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import GenerateBarcode from '../component/GenerateBarcode';
+import { loginUser } from '../handler';
 
-function Login() {
+function LoginCustomer() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -15,9 +20,20 @@ function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Login attempt:', formData);
+    setIsLoading(true);
+
+    const result = await loginUser(formData);
+
+    if (result.success) {
+      navigate('/home');
+    } else {
+      setErrorMessage(result.error);
+      setShowAlert(true);
+    }
+
+    setIsLoading(false);
   };
 
   return (
@@ -37,7 +53,7 @@ function Login() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="username"
+              placeholder="email"
               className="w-full p-4 bg-gray-100 rounded-full text-gray-700 focus:outline-none"
               required
             />
@@ -63,19 +79,6 @@ function Login() {
             LOGIN
           </button>
         </form>
-
-        <Link to="/home" className="text-[#3C6255]">
-         jalur langit
-        </Link>
-
-        <Link to="/home-staff" className="text-[#3C6255]">
-         jalur langit 2
-        </Link>
-
-        <Link to="/courier_home" className="text-[#3C6255]">
-         jalur langit 3
-        </Link>
-
         <div className="mt-6 text-center">
           <span className="text-gray-600">Belum punya akun? </span>
           <Link to="/register" className="text-[#3C6255]">
@@ -87,4 +90,4 @@ function Login() {
   )
 }
 
-export default Login
+export default LoginCustomer

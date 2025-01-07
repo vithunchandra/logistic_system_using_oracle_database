@@ -10,7 +10,7 @@ function Profile() {
   };
 
   const confirmLogout = () => {
-    navigate('/login');
+    navigate('/login-customer');
   };
 
   return (

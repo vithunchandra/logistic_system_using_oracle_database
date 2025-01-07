@@ -1,7 +1,13 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { registerUser } from '../handler';
 
 function Register() {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,15 +24,29 @@ function Register() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validasi password
+    
     if (formData.password !== formData.confirmPassword) {
-      alert('Password tidak cocok!');
+      setErrorMessage('Password tidak cocok!');
+      setShowErrorAlert(true);
       return;
     }
-    // TODO: Implement registration logic here
-    console.log('Form submitted:', formData);
+
+    setIsLoading(true);
+    const result = await registerUser(formData);
+
+    if (result.success) {
+      setShowSuccessAlert(true);
+      // Redirect setelah 2 detik
+      setTimeout(() => {
+        navigate('/login-customer');
+      }, 2000);
+    } else {
+      setErrorMessage(result.error);
+      setShowErrorAlert(true);
+    }
+    setIsLoading(false);
   };
 
   return (
@@ -127,11 +147,51 @@ function Register() {
 
         <div className="mt-6 text-center">
           <span className="text-gray-600">Sudah punya akun? </span>
-          <Link to="/login" className="text-[#3C6255]">
+          <Link to="/login-customer" className="text-[#3C6255]">
             login
           </Link>
         </div>
       </div>
+
+      {/* Success Alert */}
+      {showSuccessAlert && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-[80%] max-w-sm">
+            <h3 className="text-lg font-semibold mb-4 text-[#3C6255]">Registrasi Berhasil!</h3>
+            <p className="text-gray-600 mb-6">
+              Akun Anda telah berhasil dibuat. Anda akan diarahkan ke halaman login.
+            </p>
+            <div className="flex justify-center">
+              <div className="w-6 h-6 border-2 border-[#3C6255] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Alert */}
+      {showErrorAlert && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-[80%] max-w-sm">
+            <h3 className="text-lg font-semibold mb-4 text-red-600">Registrasi Gagal</h3>
+            <p className="text-gray-600 mb-6">{errorMessage}</p>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowErrorAlert(false)}
+                className="px-4 py-2 bg-[#3C6255] text-white rounded-lg hover:bg-[#3C6255]/90"
+              >
+                Tutup
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Loading Overlay */}
+      {isLoading && !showSuccessAlert && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      )}
     </div>
   )
 }

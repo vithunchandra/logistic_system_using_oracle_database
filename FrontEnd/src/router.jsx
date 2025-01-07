@@ -1,14 +1,17 @@
 import { createBrowserRouter } from "react-router-dom";
 
 // import handler from "./handler.jsx";
-import Login from "./pages/login.jsx";
 import Register from "./pages/register.jsx";
 import App from "./App.jsx";
+
+// Login
+import LoginStaff from "./pages/login-Staff.jsx";
+import LoginCourier from "./pages/login-Courier.jsx";
+import LoginCustomer from "./pages/login-Customer.jsx";
 
 // Customer
 import Home from "./pages/customer/Home.jsx"
 import Profile from "./pages/customer/Profile.jsx";
-import Delivery from "./pages/customer/Menu/Delivery.jsx";
 
 // staff
 import StaffHome from "./pages/staff/Staff-Home.jsx"
@@ -19,6 +22,8 @@ import CreateShipment from "./pages/staff/Menu/Create-shipment.jsx";
 
 // courier
 import Courier_home from "./pages/courier/Courier-home.jsx";
+import SettingCourier from "./pages/courier/SettingCourier.jsx";
+import pickPackage from "./pages/courier/Menu/Pick-Package.jsx";
 
 
 
@@ -29,8 +34,16 @@ const router = createBrowserRouter([
         element: <App />,
     },
     {
-        path: "/login",
-        element: <Login />,
+        path: "/login-customer",
+        element: <LoginCustomer />,
+    },
+    {
+        path: "/login-staff",
+        element: <LoginStaff />,
+    },
+    {
+        path: "/login-courier",
+        element: <LoginCourier />,
     },
     {
         path: "/register",
@@ -53,6 +66,10 @@ const router = createBrowserRouter([
         element: <Setting />,
     },
     {
+        path: "/setting-courier",
+        element: <SettingCourier />,
+    },
+    {
         path: "/create-branch",
         element: <CreateBranch />,
     },
@@ -69,10 +86,9 @@ const router = createBrowserRouter([
         element: <Courier_home />,
     },
     {
-        path: "/delivery",
-        element: <Delivery />,
+        path: "/pick-package",
+        element: <pickPackage />,
     },
-
     
 
 ]);

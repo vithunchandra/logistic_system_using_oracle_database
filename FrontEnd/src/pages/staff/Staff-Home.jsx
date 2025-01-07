@@ -9,6 +9,21 @@ function Staff_home() {
   const [trackingNumber, setTrackingNumber] = useState('');
   const [showFinishTransit, setShowFinishTransit] = useState(false);
 
+  // Ambil data staff dari localStorage dengan safe parsing
+  const getStaffData = () => {
+    const staffDataString = localStorage.getItem('staffData');
+    if (!staffDataString) return null;
+    try {
+      return JSON.parse(staffDataString);
+    } catch (error) {
+      console.error('Error parsing staff data:', error);
+      return null;
+    }
+  };
+
+  const staffData = getStaffData();
+  const currentBranch = staffData?.branch_name || 'Unknown Location';
+
   const handleScanSuccess = (result) => {
     setTrackingNumber(result);
   };
@@ -20,7 +35,7 @@ function Staff_home() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <p className="text-white text-sm">Current Location</p>
-            <h2 className="text-white text-xl font-semibold">Jomokkerto</h2>
+            <h2 className="text-white text-xl font-semibold">{currentBranch}</h2>
           </div>
           <Link to="/setting">
             <div className="w-10 h-10 bg-white rounded-full overflow-hidden cursor-pointer flex items-center justify-center hover:bg-gray-100">

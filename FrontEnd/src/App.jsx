@@ -27,7 +27,7 @@ function App() {
         {/* Button Section */}
         <div className="w-full mb-8">
           <Link 
-            to="/login" 
+            to="/login-customer" 
             className="block w-full bg-[#3C6255] text-white py-4 px-8 rounded-full text-center text-lg font-medium hover:bg-[#3C6255]/90"
           >
             Get Started
