@@ -51,7 +51,7 @@ export default class ShipmentTransitProvider{
             return res.status(404).json({message: "Data pengiriman tidak ditemukan"})
         }
 
-        const transit = await this.#shipmentTransitRepository.getShipmentTransit(req.query)
+        const transit = await this.#shipmentTransitRepository.getShipmentTransit({shipment_id})
         return res.status(200).json({transit})
     }
 

@@ -120,7 +120,7 @@ export default class ShipmentQueueProvider{
     async getShipment(req, res){
         const {shipment_id} = req.params
         const shipment = await this.#shipmentQueueRepository.getShipment(shipment_id)
-        const transit = await this.#shipmentTransitRepository.getShipmentTransit(shipment_id)
+        const transit = await this.#shipmentTransitRepository.getShipmentTransit({shipment_id})
         
         return res.status(200).json({shipment: {...shipment, transit}})
     }
@@ -130,7 +130,9 @@ export default class ShipmentQueueProvider{
         let shipments = await this.#shipmentQueueRepository.getAllShipments(origin_id, destination_id, status, order_by)
         shipments = await Promise.all(
             shipments.map( async shipment => {
-                const transit = await this.#shipmentTransitRepository.getShipmentTransit(shipment.id)
+                const transit = await this.#shipmentTransitRepository.getShipmentTransit({
+                    shipment_id: shipment.id,
+                })
                 return {
                     ...shipment, transit
                 }
