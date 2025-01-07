@@ -71,12 +71,13 @@ export default class CourierQueueRepository{
         return convertToSingleObject(courierQueue.rows)
     }
 
-    async getAllCourierQueuesWithoutCourier(){
+    async getAllCourierQueuesWithoutCourier(branch_id){
         const sql = `
             ${this.#selectStatement}
-            WHERE cq.courier_id IS NULL
+            WHERE cq.courier_id IS null AND sq.destination_branch = :branch_id
         `
-        const result = await this.#connection.execute(sql)
+        console.log(sql)
+        const result = await this.#connection.execute(sql, {branch_id})
         return convertToArray(result.rows)
     }
 
@@ -107,6 +108,15 @@ export default class CourierQueueRepository{
 
         const result = await this.#connection.execute(sql, bind)
         return convertToArray(result.rows)
+    }
+
+    async getCourierCourierQueues(id, courier_id){
+        const sql = `
+            ${this.#selectStatement}
+            WHERE cq.id = :id, cq.courier_id = :courier_id
+        `
+        const result = await this.#connection.execute(sql, {id, courier_id})
+        return convertToSingleObject(result.rows)
     }
 
     async getLastRow(id){

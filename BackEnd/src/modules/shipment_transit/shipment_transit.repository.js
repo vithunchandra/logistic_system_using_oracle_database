@@ -115,6 +115,11 @@ export default class ShipmentTransitRepository{
         return convertToSingleObject(nextTransit.rows)
     }
 
+    async getNextTransitId(shipment_id){
+        const transit = this.getShipmentTransitByShipmentId(shipment_id)
+        
+    }
+
     async getPreviousTransit(next_transit_id){
         const nextTransit = await this.getTransit(next_transit_id)
         const sql = `

@@ -98,6 +98,7 @@ export default class ShipmentQueueProvider{
                 })
             }
             const transit = await this.#shipmentTransitRepository.createShipmentTransit(routeData, shipmentQueue.id)
+            // const transit = await this.#shipmentTransitRepository.getShipmentTransit({shipment_id: shipmentQueue.id})
             const firstTransit = transit[0]
             const branch = await this.#branchRepository.getBranch(firstTransit.next_branch)
             await this.#trackingRepository.createTrack({

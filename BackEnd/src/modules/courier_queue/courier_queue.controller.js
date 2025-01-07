@@ -7,9 +7,9 @@ const courierQueueController = async () => {
     const courierQueueProvider = await CourierQueueProvider.getCourierQueueProvider()
 
     router.put("/assign/:id", [courierAuthentication], courierQueueProvider.assignCourier.bind(courierQueueProvider))
-    router.get("/without-courier", courierQueueProvider.getAllCourierQueuesWithoutCourier.bind(courierQueueProvider))
-    router.get("/:id", courierQueueProvider.getCourierQueue.bind(courierQueueProvider))
-    router.get("/", courierQueueProvider.getAllCourierQueues.bind(courierQueueProvider))
+    router.get("/without-courier", [courierAuthentication], courierQueueProvider.getAllCourierQueuesWithoutCourier.bind(courierQueueProvider))
+    router.get("/:id", [courierAuthentication], courierQueueProvider.getCourierQueue.bind(courierQueueProvider))
+    router.get("/", [courierAuthentication], courierQueueProvider.getAllCourierQueues.bind(courierQueueProvider))
     router.put('/finish/:id', [courierAuthentication], courierQueueProvider.finishCourierQueue.bind(courierQueueProvider))
 
     return router

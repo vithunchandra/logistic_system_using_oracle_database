@@ -41,13 +41,18 @@ export default class CourierQueueProvider{
     }
 
     async getCourierQueue(req, res){
+        const courier = req.courier
         const {id} = req.params
         const courierQueue = await this.#courierQueueRepository.getCourierQueue(id)
+        if(courierQueue.courier_id != null && courierQueue.courier_id != courier.id){
+            return res.status(403).json({message: "Courier queue bukan milik courier"})
+        }
         return res.status(200).json({courierQueue})
     }
 
     async getAllCourierQueuesWithoutCourier(req, res){
-        const result = await this.#courierQueueRepository.getAllCourierQueuesWithoutCourier()
+        const courier = req.courier
+        const result = await this.#courierQueueRepository.getAllCourierQueuesWithoutCourier(courier.branch_id)
         return res.status(200).json({courierQueues: result})
     }
 

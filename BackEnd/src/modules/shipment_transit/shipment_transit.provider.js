@@ -69,7 +69,7 @@ export default class ShipmentTransitProvider{
         if(transit.next_branch !== staff.branch_id){
             return res.status(401).json({message: "Staff bukan berasal dari branch tujuan transit"})
         }
-    
+        
         let shipment = await this.#shipmentQueueRepository.getShipment(transit.shipment_id)
 
         if(shipment.origin_branch !== transit.previous_branch){
