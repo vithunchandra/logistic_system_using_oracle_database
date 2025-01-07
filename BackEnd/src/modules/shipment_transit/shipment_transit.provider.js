@@ -85,7 +85,8 @@ export default class ShipmentTransitProvider{
             const branch = await this.#branchRepository.getBranch(transit.next_branch)
             await this.#trackingRepository.createTrack({
                 id: null, shipment_id: transit.shipment_id, staff_id: staff.id, 
-                message: `Barang sudah sampai pada branch destinasi ${branch.name}`, created_at: new Date()
+                message: `Barang sudah sampai pada branch destinasi ${branch.name}`, 
+                created_at: new Date(), updated_at: null
             })
             if(shipment.destination_branch === transit.next_branch){
                 const courierQueue = await this.#courierQueueRepository.createCourierQueue({
@@ -100,7 +101,8 @@ export default class ShipmentTransitProvider{
                 
                 await this.#trackingRepository.createTrack({
                     id: null, shipment_id: transit.shipment_id, staff_id: staff.id, 
-                    message: `Barang sudah masuk dalam antrian delivery`, created_at: new Date((new Date()).getTime() + 1)
+                    message: `Barang sudah masuk dalam antrian delivery`, 
+                    created_at: new Date((new Date()).getTime() + 1), updated_at: null
                 })
 
                 await this.#connection.commit()
@@ -112,7 +114,8 @@ export default class ShipmentTransitProvider{
                 const nextBranch = await this.#branchRepository.getBranch(nextTransit.next_branch)
                 await this.#trackingRepository.createTrack({
                     id: null, shipment_id: transit.shipment_id, staff_id: staff.id, 
-                    message: `Barang sedang dalam perjalanan transit menuju branch ${nextBranch.name}`, created_at: new Date((new Date()).getTime() + 1)
+                    message: `Barang sedang dalam perjalanan transit menuju branch ${nextBranch.name}`, 
+                    created_at: new Date((new Date()).getTime() + 1), updated_at: null
                 })
 
                 await this.#connection.commit()

@@ -103,7 +103,8 @@ export default class ShipmentQueueProvider{
             const branch = await this.#branchRepository.getBranch(firstTransit.next_branch)
             await this.#trackingRepository.createTrack({
                 id: null, shipment_id: shipmentQueue.id, staff_id: staff.id, 
-                message: `Barang sedang dalam perjalanan transit menuju branch ${branch.name}`, created_at: new Date()
+                message: `Barang sedang dalam perjalanan transit menuju branch ${branch.name}`,
+                created_at: new Date(), updated_at: null
             })
             
             await this.#connection.commit()

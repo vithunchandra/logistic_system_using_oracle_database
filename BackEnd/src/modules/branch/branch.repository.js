@@ -38,6 +38,7 @@ export default class BranchRepository{
         const result = await this.#connection.execute(
             `SELECT * FROM branches`
         )
+        console.log(result)
 
         return convertToArray(result.rows)
     }

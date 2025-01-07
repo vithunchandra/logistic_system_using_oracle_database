@@ -18,7 +18,7 @@ export class TrackingRepository{
     }
 
     async createTrack(shipmentTrackingData){
-        const sql = `INSERT INTO trackings VALUES(:id, :shipment_id, :staff_id, :message, :created_at)`
+        const sql = `INSERT INTO trackings VALUES(:id, :shipment_id, :staff_id, :message, :created_at, :updated_at)`
         const result = await this.#connection.execute(
             sql,
             {...shipmentTrackingData}

@@ -80,7 +80,8 @@ export default class CourierQueueProvider{
             courierQueue = await this.#courierQueueRepository.assignCourier(id, courier.id)
             await this.#trackingRepository.createTrack({
                 id: null, shipment_id: courierQueue.shipment_id, staff_id: null, 
-                message: `Barang sedang diantar oleh courier ke tujuan`, created_at: new Date()
+                message: `Barang sedang diantar oleh courier ke tujuan`, 
+                created_at: new Date(), updated_at: null
             })
             await this.#connection.commit()
             return res.status(201).json({courierQueue})
@@ -112,7 +113,8 @@ export default class CourierQueueProvider{
             const shipment = await this.#shipmentQueueRepository.updateShipmentQueueStatus(courierQueue.shipment_id, ShipmentStatus.ARRIVED)
             await this.#trackingRepository.createTrack({
                 id: null, shipment_id: shipment.id, staff_id: null, 
-                message: `Barang telah sampai pada tujuan`, created_at: new Date()
+                message: `Barang telah sampai pada tujuan`, 
+                created_at: new Date(), updated_at: null
             })
             await this.#connection.commit()
             return res.status(201).json({courierQueue})

@@ -20,9 +20,9 @@ const surabayaCourierConfig = {
 }
 
 const surabayaConfig = {
-    user          : "bali",
-    password      : "bali",
-    connectString : "localhost/diondb"
+    user          : process.env.DATABASE_USERNAME,
+    password      : process.env.DATABASE_PASSWORD,
+    connectString : process.env.connectString
 }
 
 export {surabayaConfig, surabayaCustomerConfig, surabayaKarywanConfig, surabayaCourierConfig}

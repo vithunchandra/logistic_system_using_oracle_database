@@ -40,7 +40,9 @@ export default class BranchProvider{
     }
 
     async getAllBranch(req, res){
-        return res.status(200).json({branches: await this.#branchRepository.getAllBranch()})
+        const result = await this.#branchRepository.getAllBranch()
+        console.log(result)
+        return res.status(200).json({branches: result})
     }
 
     async getBranch(req, res){
