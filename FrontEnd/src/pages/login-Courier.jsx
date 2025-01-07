@@ -26,7 +26,9 @@ function LoginCourier() {
     const result = await loginCourier(formData);
 
     if (result.success) {
-      navigate('/courier_home');
+      localStorage.setItem('courierToken', result.token);
+      localStorage.setItem('courierData', JSON.stringify(result.data));
+      navigate('/home-courier');
     } else {
       setErrorMessage(result.error);
       setShowAlert(true);

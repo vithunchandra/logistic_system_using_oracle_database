@@ -23,7 +23,8 @@ import CreateShipment from "./pages/staff/Menu/Create-shipment.jsx";
 // courier
 import Courier_home from "./pages/courier/Courier-home.jsx";
 import SettingCourier from "./pages/courier/SettingCourier.jsx";
-import pickPackage from "./pages/courier/Menu/Pick-Package.jsx";
+import PickPackage from "./pages/courier/Menu/Pick-Package.jsx";
+import CompleteDelivery from "./pages/courier/Menu/Complete-Delivery.jsx";
 
 
 
@@ -87,7 +88,11 @@ const router = createBrowserRouter([
     },
     {
         path: "/pick-package",
-        element: <pickPackage />,
+        element: <PickPackage />,
+    },
+    {
+        path: "/complete-delivery",
+        element: <CompleteDelivery />,
     },
     
 

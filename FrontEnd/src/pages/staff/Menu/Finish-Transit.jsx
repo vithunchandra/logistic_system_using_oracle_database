@@ -28,7 +28,7 @@ function FinishTransit({ isOpen, onClose }) {
       setTimeout(() => {
         setShowSuccessAlert(false);
         onClose();
-      }, 2000);
+      }, 5000);
     } else {
       setErrorMessage(result.error);
       setShowErrorAlert(true);

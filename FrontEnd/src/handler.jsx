@@ -345,6 +345,128 @@ async function finishTransit(transitId) {
     }
 }
 
+// Get All Courier Queue
+async function getAllCourierQueue() {
+    try {
+        const courierToken = localStorage.getItem('courierToken');
+        const response = await axios.get(
+            `${url_api}/courier-queue/`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${courierToken}`
+                }
+            }
+        );
+        
+        return {
+            success: true,
+            data: response.data
+        };
+    } catch (error) {
+        return {
+            success: false,
+            error: error.response?.data?.message || 'Gagal mengambil data paket'
+        };
+    }
+}
+
+// Assign Package
+async function assignPackage(queueId) {
+    try {
+        const courierToken = localStorage.getItem('courierToken');
+        console.log('Assigning package with ID:', queueId); // Debug
+        console.log('Using token:', courierToken); // Debug
+
+        const response = await axios({
+            method: 'PUT', // Ubah ke PUT method
+            url: `${url_api}/courier-queue/assign/${queueId}`,
+            headers: {
+                'Authorization': `Bearer ${courierToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        console.log('Assign Response:', response.data); // Debug
+
+        return {
+            success: true,
+            data: response.data
+        };
+    } catch (error) {
+        console.error('Error assigning package:', error.response || error);
+        
+        // Tampilkan pesan error yang lebih spesifik
+        const errorMessage = error.response?.data?.message || 
+                           error.response?.data?.error || 
+                           'Gagal mengambil paket';
+                           
+        return {
+            success: false,
+            error: errorMessage
+        };
+    }
+}
+
+// Get Courier Deliveries
+async function getCourierDeliveries() {
+    try {
+        const courierToken = localStorage.getItem('courierToken');
+        console.log('Using token:', courierToken); // Debug
+
+        const response = await axios.get(
+            `${url_api}/courier-queue/`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${courierToken}`
+                }
+            }
+        );
+        
+        console.log('API Response:', response.data); // Debug
+
+        return {
+            success: true,
+            data: response.data
+        };
+    } catch (error) {
+        console.error('Error fetching deliveries:', error);
+        return {
+            success: false,
+            error: error.response?.data?.message || 'Gagal mengambil data pengiriman'
+        };
+    }
+}
+
+// Finish Delivery
+async function finishDelivery(queueId) {
+    try {
+        const courierToken = localStorage.getItem('courierToken');
+        console.log('Finishing delivery:', queueId); // Debug
+
+        const response = await axios({
+            method: 'PUT',
+            url: `${url_api}/courier-queue/finish/${queueId}`,
+            headers: {
+                'Authorization': `Bearer ${courierToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        console.log('Finish Response:', response.data); // Debug
+
+        return {
+            success: true,
+            data: response.data
+        };
+    } catch (error) {
+        console.error('Error finishing delivery:', error);
+        return {
+            success: false,
+            error: error.response?.data?.message || 'Gagal menyelesaikan pengiriman'
+        };
+    }
+}
+
 export {
     registerUser,
     loginUser,
@@ -364,5 +486,9 @@ export {
     createBranch,
     getAllUsers,
     getShipmentTransit,
-    finishTransit
+    finishTransit,
+    getAllCourierQueue,
+    assignPackage,
+    getCourierDeliveries,
+    finishDelivery
 };
