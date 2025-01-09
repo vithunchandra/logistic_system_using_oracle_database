@@ -1,39 +1,38 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTrackings } from '../../../handler';
+import { getTrackings, getShipment } from '../../../handler';
 
 function Tracking() {
   const { trackingNumber } = useParams();
   const navigate = useNavigate();
   const [trackingData, setTrackingData] = useState(null);
+  const [shipmentData, setShipmentData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchTrackingData = async () => {
+    const fetchData = async () => {
       try {
-        const response = await getTrackings(trackingNumber);
-        if (response && response.data) {
-          const formattedData = {
-            tracking_number: trackingNumber,
-            status: response.data.tracks?.status || 'Pending',
-            tracks: Array.isArray(response.data.tracks) 
-              ? response.data.tracks 
-              : [response.data.tracks]
-          };
-          setTrackingData(formattedData);
+        // Fetch tracking data
+        const trackingResponse = await getTrackings(trackingNumber);
+        // Fetch shipment data
+        const shipmentResponse = await getShipment(trackingNumber);
+
+        if (trackingResponse.success && shipmentResponse.success) {
+          setTrackingData(trackingResponse.data);
+          setShipmentData(shipmentResponse.data.shipment);
         } else {
           setError('Tracking data not found');
         }
       } catch (err) {
         setError('Failed to fetch tracking data');
-        console.error('Error fetching tracking data:', err);
+        console.error('Error fetching data:', err);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchTrackingData();
+    fetchData();
   }, [trackingNumber]);
 
   if (isLoading) {
@@ -67,7 +66,7 @@ function Tracking() {
     );
   }
 
-  if (!trackingData) {
+  if (!trackingData || !shipmentData) {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="bg-white rounded-xl shadow-lg p-6 max-w-lg mx-auto mt-10">
@@ -127,18 +126,34 @@ function Tracking() {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Tracking Number:</span>
-              <span className="font-semibold">{trackingData.tracking_number}</span>
+              <span className="font-semibold">{trackingNumber}</span>
             </div>
             
             <div className="flex justify-between items-center">
               <span className="text-gray-600">Current Status:</span>
               <span className={`font-semibold px-3 py-1 rounded-full ${
-                trackingData.status === 'Delivered' ? 'bg-green-100 text-green-600' : 
-                trackingData.status === 'In Transit' ? 'bg-blue-100 text-blue-600' : 
-                'bg-yellow-100 text-yellow-600'
+                shipmentData.status === 'Delivered' || shipmentData.status === 'Arrived'
+                  ? 'bg-green-100 text-green-600' 
+                : shipmentData.status === 'In Transit' 
+                  ? 'bg-blue-100 text-blue-600' 
+                : 'bg-yellow-100 text-yellow-600'
               }`}>
-                {trackingData.status}
+                {shipmentData.status || 'Pending'}
               </span>
+            </div>
+
+            {/* Shipment Details */}
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Origin:</span>
+              <span className="font-semibold">{shipmentData.origin || '-'}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Destination:</span>
+              <span className="font-semibold">{shipmentData.destination || '-'}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Service:</span>
+              <span className="font-semibold">{shipmentData.service || '-'}</span>
             </div>
           </div>
         </div>
