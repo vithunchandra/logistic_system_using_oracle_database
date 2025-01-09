@@ -55,7 +55,7 @@ function Tracking() {
             <h2 className="text-xl font-semibold mb-2">Error</h2>
             <p className="text-gray-600">{error}</p>
             <button 
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/home')}
               className="mt-4 px-4 py-2 bg-[#3C6255] text-white rounded-lg hover:bg-[#3C6255]/90"
             >
               Back to Home
@@ -93,7 +93,7 @@ function Tracking() {
         {/* Back Button */}
         <div className="flex items-center mb-4">
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/home')}
             className="text-white flex items-center"
           >
             <svg 
@@ -140,20 +140,6 @@ function Tracking() {
               }`}>
                 {shipmentData.status || 'Pending'}
               </span>
-            </div>
-
-            {/* Shipment Details */}
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Origin:</span>
-              <span className="font-semibold">{shipmentData.origin || '-'}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Destination:</span>
-              <span className="font-semibold">{shipmentData.destination || '-'}</span>
-            </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Service:</span>
-              <span className="font-semibold">{shipmentData.service || '-'}</span>
             </div>
           </div>
         </div>
