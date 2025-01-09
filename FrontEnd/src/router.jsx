@@ -26,6 +26,8 @@ import SettingCourier from "./pages/courier/SettingCourier.jsx";
 import PickPackage from "./pages/courier/Menu/Pick-Package.jsx";
 import CompleteDelivery from "./pages/courier/Menu/Complete-Delivery.jsx";
 
+import Tracking from './pages/customer/Menu/tracking';
+
 
 
 
@@ -93,6 +95,10 @@ const router = createBrowserRouter([
     {
         path: "/complete-delivery",
         element: <CompleteDelivery />,
+    },
+    {
+        path: '/tracking/:trackingNumber',
+        element: <Tracking />
     },
     
 

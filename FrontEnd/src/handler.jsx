@@ -299,6 +299,28 @@ async function getShipmentTransit(shipmentId) {
     }
 }
 
+async function getShipment(shipment_id){
+    try{
+        const response = await axios({
+            method: 'GET',
+            url: `${url_api}/shipment-queue/${shipment_id}`,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return {
+            success: true,
+            data: response.data // Mengambil transit pertama
+        };
+    }catch(error){
+        return {
+            success: false,
+            error: error.response?.data?.message || 'Gagal mengambil data shipment'
+        };
+    }
+}
+
 // Finish Transit
 async function finishTransit(transitId) {
     try {
@@ -467,6 +489,28 @@ async function finishDelivery(queueId) {
     }
 }
 
+async function getTrackings(shipment_id){
+    try{
+        const response = await axios({
+            method: 'GET',
+            url: `${url_api}/track/${shipment_id}`,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return {
+            success: true,
+            data: response.data
+        }
+    }catch(error){
+        console.error('Error finishing delivery:', error);
+        return {
+            success: false,
+            error: error.response?.data?.message || 'Gagal melihat trackingss'
+        };
+    }
+}
+
 export {
     registerUser,
     loginUser,
@@ -486,9 +530,11 @@ export {
     createBranch,
     getAllUsers,
     getShipmentTransit,
+    getShipment,
     finishTransit,
     getAllCourierQueue,
     assignPackage,
     getCourierDeliveries,
-    finishDelivery
+    finishDelivery,
+    getTrackings
 };

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import BarcodeScanner from '../../component/BarcodeScanner';
+import { getTrackings } from '../../handler.jsx';
 
 function Home() {
   const navigate = useNavigate();
@@ -17,15 +18,6 @@ function Home() {
   const handleTrack = () => {
     if (!trackingNumber.trim()) {
       setShowEmptyAlert(true);
-      return;
-    }
-
-    // Implementasi validasi tracking number
-    // Contoh: cek apakah tracking number ada di database
-    const isValidTracking = false; // Ganti dengan validasi sebenarnya
-
-    if (!isValidTracking) {
-      setShowNotFoundAlert(true);
       return;
     }
 
